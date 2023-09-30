@@ -72,3 +72,5 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+Content/EchoContent/Characters/Echo/Meshes/Echo_Hair.uasset
+Content/EchoContent/Characters/Echo/Textures/Head/T_Head_highpass_S.uasset
