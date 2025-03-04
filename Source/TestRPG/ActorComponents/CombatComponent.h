@@ -63,4 +63,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	UAnimMontage* KickAnim;
 
+	FTimerHandle SwordTraceHandle;
+	void SwordTrace_Start();
+	void SwordTrace_Loop();
+	void SwordTrace_End();
+	void ForwardHitTrace();
 };

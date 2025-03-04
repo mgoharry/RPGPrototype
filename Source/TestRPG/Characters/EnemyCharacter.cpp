@@ -51,7 +51,7 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void AEnemyCharacter::StealthKilled(FVector& outREFLocation, FRotator& outRotation)
 {
-	IStealthable::StealthKilled(outREFLocation, outRotation);
+	IKillable::StealthKilled(outREFLocation, outRotation);
 
 	outREFLocation = StealthKillREF->GetComponentLocation();
 
@@ -69,7 +69,7 @@ void AEnemyCharacter::StealthKilled(FVector& outREFLocation, FRotator& outRotati
 
 void AEnemyCharacter::ForceChoked(FVector Location, FVector PlayerLocation)
 {
-	IStealthable::ForceChoked(Location, PlayerLocation);
+	IKillable::ForceChoked(Location, PlayerLocation);
 	FMotionWarpingTarget ChokeWarp;
 	ChokeWarp.Name = FName("ChokeWarp");
 	ChokeWarp.Location = GetActorLocation();
@@ -83,6 +83,23 @@ void AEnemyCharacter::ForceChoked(FVector Location, FVector PlayerLocation)
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	StealthKillSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+}
+
+float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	FMotionWarpingTarget HitWarp;
+	HitWarp.Name = FName("HitWarp");
+	//HitWarp.Location = GetActorLocation();
+	HitWarp.Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), DamageCauser->GetActorLocation());
+	MotionWarpingComp->AddOrUpdateWarpTarget(HitWarp);
+
+	PlayAnimMontage(SwordHitMontages[FMath::RandRange(0, SwordHitMontages.Num() - 1)]);
+
+	LaunchCharacter(DamageCauser->GetActorForwardVector() * 600, false, false);
+
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 }
 

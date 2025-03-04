@@ -5,13 +5,14 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "TestRPG/Interfaces/Stealthable.h"
-#include "TestRPG/Weapons/Lightsaber.h"
+#include "TestRPG/Interfaces/Killable.h"
+#include "TestRPGWeapons/Lightsaber.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -36,6 +37,15 @@ AMainCharacter::AMainCharacter()
 
 	LightSaberActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("LightSaber Child Actor Component"));
 	LightSaberActor->SetupAttachment(GetMesh(), FName("hand_r"));
+
+	SwordTraceStartPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Sword Trace Start Point"));
+	SwordTraceStartPoint->SetupAttachment(LightSaberActor);
+
+	SwordTraceEndPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Sword Trace End Point"));
+	SwordTraceEndPoint->SetupAttachment(LightSaberActor);
+
+	HitTracePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Hit Trace Point"));
+	HitTracePoint->SetupAttachment(RootComponent);
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
@@ -293,9 +303,9 @@ void AMainCharacter::StealthKill()
 
 	for (auto OverlappingActor : OverlappingActors)
 	{
-		if (OverlappingActor->GetClass()->ImplementsInterface(UStealthable::StaticClass()))
+		if (OverlappingActor->GetClass()->ImplementsInterface(UKillable::StaticClass()))
 		{
-			Cast<IStealthable>(OverlappingActor)->StealthKilled(OutREFLocation, OutRotation);
+			Cast<IKillable>(OverlappingActor)->StealthKilled(OutREFLocation, OutRotation);
 
 			FMotionWarpingTarget StealthWarp;
 			StealthWarp.Name = FName("StealthWarp");
@@ -324,9 +334,9 @@ void AMainCharacter::ForceChoke()
 	{
 		for (auto Hit : Hits)
 		{
-			if (Hit.GetActor()->GetClass()->ImplementsInterface(UStealthable::StaticClass()))
+			if (Hit.GetActor()->GetClass()->ImplementsInterface(UKillable::StaticClass()))
 			{
-				Cast<IStealthable>(Hit.GetActor())->ForceChoked(GetActorLocation() + GetActorForwardVector() * 600, GetActorLocation());
+				Cast<IKillable>(Hit.GetActor())->ForceChoked(GetActorLocation() + GetActorForwardVector() * 600, GetActorLocation());
 
 				FMotionWarpingTarget ChokeWarp;
 				ChokeWarp.Name = FName("ChokeWarp");

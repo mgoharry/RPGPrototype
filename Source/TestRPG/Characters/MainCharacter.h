@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
 #include "MotionWarpingComponent.h"
+#include "Components/ArrowComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "TestRPG/TestRPGCharacter.h"
@@ -38,6 +39,14 @@ class TESTRPG_API AMainCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UChildActorComponent* LightSaberActor;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UArrowComponent* SwordTraceStartPoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UArrowComponent* SwordTraceEndPoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UArrowComponent* HitTracePoint;
 	//Input
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* InputMappingContext;
@@ -79,6 +88,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 	void Move(const FInputActionValue& Value);
 
@@ -168,6 +178,10 @@ public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UCombatComponent* GetCombatComponent() const { return CombatComponent; }
+
+	FORCEINLINE FVector GetSwordTraceStart() const { return SwordTraceStartPoint->GetComponentLocation(); }
+	FORCEINLINE FVector GetSwordTraceEnd() const { return SwordTraceEndPoint->GetComponentLocation(); }
+	FORCEINLINE FVector GetHitTracePoint() const { return HitTracePoint->GetComponentLocation(); }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 	TSubclassOf<UPlayerHUDWidget> PlayerHUDWidgetClass;

@@ -2,6 +2,10 @@
 
 
 #include "CombatComponent.h"
+
+#include "Engine/DamageEvents.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "TestRPG/Characters/EnemyCharacter.h"
 #include "TestRPG/Characters/MainCharacter.h"
 
 // Sets default values for this component's properties
@@ -70,7 +74,6 @@ void UCombatComponent::SwordAttackStart()
 
 	if (bCanAttack)
 	{
-
 		if (bIsAttacking)
 		{
 			bIsSavingAttack = true;
@@ -101,6 +104,52 @@ void UCombatComponent::SwordAttackEnd()
 {
 	bIsAttacking = false;
 	AttackIndex = 0;
+}
+
+void UCombatComponent::SwordTrace_Start()
+{
+	GetWorld()->GetTimerManager().SetTimer(SwordTraceHandle, this, &UCombatComponent::SwordTrace_Loop, 0.001f, true);
+}
+
+void UCombatComponent::SwordTrace_Loop()
+{
+	if (!MainCharacter) return;
+
+	FDamageEvent SwordDamage;
+	TArray<AActor*> ActorsToIgnore;
+	FHitResult Hit;
+
+	if (UKismetSystemLibrary::SphereTraceSingle(GetWorld(), MainCharacter->GetSwordTraceStart(), MainCharacter->GetSwordTraceEnd(), 12, UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		false, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FColor::Red, FColor::Green, 0.2))
+	{
+		if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(Hit.GetActor()))
+		{
+			Enemy->TakeDamage(10, SwordDamage, MainCharacter->GetController(), GetOwner());
+		}
+	}
+}
+
+void UCombatComponent::SwordTrace_End()
+{
+	GetWorld()->GetTimerManager().ClearTimer(SwordTraceHandle);
+}
+
+void UCombatComponent::ForwardHitTrace()
+{
+	if (!MainCharacter) return;
+
+	FDamageEvent SwordDamage;
+	TArray<AActor*> ActorsToIgnore;
+	FHitResult Hit;
+
+	if (UKismetSystemLibrary::SphereTraceSingle(GetWorld(), MainCharacter->GetHitTracePoint(), MainCharacter->GetHitTracePoint(), 40, UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		false, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FColor::Red, FColor::Green, 0.2))
+	{
+		if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(Hit.GetActor()))
+		{
+			Enemy->TakeDamage(10, SwordDamage, MainCharacter->GetController(), GetOwner());
+		}
+	}
 }
 
 void UCombatComponent::PlayAttackAnimation(int InAttackIndex)

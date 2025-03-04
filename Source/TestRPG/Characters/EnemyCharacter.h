@@ -6,11 +6,11 @@
 #include "MotionWarpingComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
-#include "TestRPG/Interfaces/Stealthable.h"
+#include "TestRPG/Interfaces/Killable.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
-class TESTRPG_API AEnemyCharacter : public ACharacter, public IStealthable
+class TESTRPG_API AEnemyCharacter : public ACharacter, public IKillable
 {
 	GENERATED_BODY()
 
@@ -50,5 +50,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AnimationMontages)
 	UAnimMontage* ForceChokedMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AnimationMontages)
+	TArray<UAnimMontage*> SwordHitMontages;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 };
