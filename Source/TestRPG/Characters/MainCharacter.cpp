@@ -35,8 +35,11 @@ AMainCharacter::AMainCharacter()
 
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
 
+	CustomCharacterMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Custom Character Mesh"));
+	CustomCharacterMesh->SetupAttachment(GetMesh());
+
 	LightSaberActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("LightSaber Child Actor Component"));
-	LightSaberActor->SetupAttachment(GetMesh(), FName("hand_r"));
+	LightSaberActor->SetupAttachment(CustomCharacterMesh, FName("hand_r"));
 
 	SwordTraceStartPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Sword Trace Start Point"));
 	SwordTraceStartPoint->SetupAttachment(LightSaberActor);
@@ -258,7 +261,7 @@ void AMainCharacter::EndVault()
 
 void AMainCharacter::VaultMotionWarp()
 {
-	if (bCanWarp && UKismetMathLibrary::InRange_FloatFloat(VaultLandPosition.Z, GetMesh()->GetComponentLocation().Z - 50, GetMesh()->GetComponentLocation().Z + 50))
+	if (bCanWarp && UKismetMathLibrary::InRange_FloatFloat(VaultLandPosition.Z, CustomCharacterMesh->GetComponentLocation().Z - 50, CustomCharacterMesh->GetComponentLocation().Z + 50))
 	{
 
 		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
@@ -369,7 +372,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (PlayerStatsComponent) {
 		if (PlayerStatsComponent->DecreaseHealth(DamageAmount))
 		{
-			GetMesh()->SetAllBodiesSimulatePhysics(true);
+			CustomCharacterMesh->SetAllBodiesSimulatePhysics(true);
 			DisableInput(GetLocalViewingPlayerController());
 		}
 		else
