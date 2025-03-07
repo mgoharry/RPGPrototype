@@ -19,9 +19,11 @@ class TESTRPG_API UMainCharacterAnimInstance : public UAnimInstance
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	AMainCharacter* MainCharacter;
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AMainCharacter* MainCharacter;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;
 

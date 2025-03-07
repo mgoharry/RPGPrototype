@@ -12,7 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "TestRPG/Interfaces/Killable.h"
-#include "TestRPGWeapons/Lightsaber.h"
+#include "TestRPG/Weapons/Lightsaber.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()

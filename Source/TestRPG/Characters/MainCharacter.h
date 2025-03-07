@@ -187,6 +187,4 @@ public:
 	TSubclassOf<UPlayerHUDWidget> PlayerHUDWidgetClass;
 	UPlayerHUDWidget* PlayerHUDWidget;
 
-
-
 };
